@@ -1,4 +1,5 @@
 #include "mthreadserver.h"
+#include <unistd.h>
 
 #define MAX_INACTIVITY_MILLISECS 1000
 
@@ -149,7 +150,14 @@ QMultiThreadedServer::onNewClientConnection()
     if (m_srvConf.disableEncryption == true) {
         connect(sock, SIGNAL(readyRead()), wo, SLOT(handleClientData()));
     } else {
+        //dev
+        qDebug("start sleeping...");
+        QObject().thread()->usleep(1000*1000*1);
+        qDebug("...end sleeping");
+        qDebug("#Casting the QTcpSocket to a QSslSocket");
         QSslSocket *ssock = dynamic_cast<QSslSocket*>(sock);
+        qDebug("#QSslSocket done");
+        //
         if (ssock) {
             bool b = false;
             b = connect(ssock, SIGNAL(encrypted()), this, SLOT(onClientConnectionEncrypted()));
